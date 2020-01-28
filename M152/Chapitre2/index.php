@@ -1,7 +1,7 @@
 <!--
 	Carvalho Daniel
 	20.01.2020
-	Exercice Chapitre 1
+	Exercice Chapitre 2
 
 	Template trouvé sur :
 	https://usebootstrap.com/download-theme/facebook
@@ -128,36 +128,48 @@
 
 
 									<div class="panel panel-default">
+										<h2>Publications</h2>
 										<?php
 										include "scripts.php";
 										$uploadDir = "rsc/";
-											$ids = getAllIdPostAndIdMedia();
-											foreach ($ids as $id) {
-												$comment = getCommentWithIdPost($id["idPost"]);
-												$media = getMediaWithIdMedia($id["idMedia"]);
-												
+										$posts = getAllPosts();
+										$media = getAllMedias();
+										$total = count($posts);
+										$totalMedias = count($media);
+										for ($i = 0; $i < $total; $i++) {
 
-												echo '<div class="panel-body">
-												<div class="clearfix"></div>
-												<hr>
-	
-												<p>' . $comment["commentaire"] . '</p>
-	
-												<hr>
-												<form>
-													<div class="input-group">
+
+											echo '<div class="panel-body">
+											<div class="clearfix"></div>';
+											echo '<div class="panel-body">
+											<div class="clearfix"></div>
+											<hr>
+
+											<p><b>';
+											echo $posts[$i]["commentaire"];
+											echo '</b></p>';
+											for ($j = 0; $j < $totalMedias; $j++) {
+												if ($posts[$i]["idPost"] == $media[$j]["idPost"]) {
+													if ($media[$j]["typeMedia"] == "video/mp4") {
+														echo '<div class="input-group">
 														<div class="input-group-btn">'
-														. '<img src="'. $uploadDir.$media["nomMedia"]. '" height="50" width="50">'  . 
-														'</div>
-													</div>
-												</form>
-	
-											</div>';
-												
+															. '<video src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls>'  .
+															'</div>';
+													} else {
+														echo '<div class="input-group">
+														<div class="input-group-btn">'
+															. '<img src="' . $uploadDir . $media[$j]["nomMedia"] . '" height="350" width="350">'  .
+															'</div>';
+													}
+												}
 											}
+											echo '</div>
+
+										</div>';
+										}
 
 										?>
-										
+
 									</div>
 
 

@@ -16,27 +16,30 @@ $uploadDir = "rsc/";
 if ($btnSubmit) {
     $total = count($_FILES['img']['name']);
 
-    for ($i = 0; $i < $total; $i++) {
-        if ($_FILES['img']['size'][$i] <= 3000000) {
+    $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
+    $date = date('Y-m-d H:i:s');
+    addPost($commentaire, $date);
+
+    if ($total  > 0) { //Vérifie qu'il y ait des fichiers à importer
+        var_dump($total);
+        for ($i = 0; $i < $total; $i++) {
 
             $imgName =  $_FILES['img']['name'][$i];
             $_FILES['img']['name'][$i] = time() . "_" . $imgName;
             $imgName =  $_FILES['img']['name'][$i];
             $imgTmpName = $_FILES['img']['tmp_name'][$i];
             $imgType = $_FILES['img']['type'][$i];
-            $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
-            $date = date('Y-m-d H:i:s');
 
             move_uploaded_file($imgTmpName, $uploadDir . $imgName);
-            addMedia($imgName, $imgType);
-            addPost($commentaire, $date);
-            $idMedia = getIdMediaWithNameAndType($imgName, $imgType);
+
+            echo "name".$imgName;
+
             $idPost = getIdPostWithCommentAndDate($commentaire, $date);
 
-            addConnection($idPost["idPost"], $idMedia["idMedia"]);
-
-            header("Location: index.php");
+            addMedia($imgName, $imgType, $idPost["idPost"]);
         }
+        header("Location: index.php");
+        exit();
     }
 }
 
@@ -156,7 +159,7 @@ if ($btnSubmit) {
 
                                     <form action="post.php" method="POST" enctype="multipart/form-data">
                                         <div class="panel panel-default">
-                                            <div class="panel-heading"><a href="#" class="pull-right">View all</a>
+                                            <div class="panel-heading">
                                                 <h4>Post</h4>
                                             </div>
                                             <div class="panel-body">
@@ -164,7 +167,7 @@ if ($btnSubmit) {
                                                 <input type="text" class="form-control" name="commentaire" placeholder="Add a comment here !" />
                                                 <div class="clearfix"></div>
                                                 <hr>
-                                                Choose images : <input type="file" name="img[]" multiple />
+                                                Choose images : <input type="file" name="img[]" multiple accept="image/*,video/*" />
 
                                                 <hr>
                                                 <input type="submit" value="Post" name="valider" />
