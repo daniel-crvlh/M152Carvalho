@@ -146,23 +146,39 @@
 											<hr>
 
 											<p><b>';
-											echo $posts[$i]["commentaire"];
+											echo $posts[$i]["commentaire"] ;
+											echo "<a href='deletePost.php?id=" . $posts[$i]["idPost"] . "'> <button class='btn btn-primary btn-sm'>Delete</button></a>";
 											echo '</b></p>';
 											for ($j = 0; $j < $totalMedias; $j++) {
 												if ($posts[$i]["idPost"] == $media[$j]["idPost"]) {
-													if ($media[$j]["typeMedia"] == "video/mp4") {
+
+													$typeFinal = explode("/", $media[$j]["typeMedia"]);
+
+
+
+													if ($typeFinal[0] == "video") {
 														echo '<div class="input-group">
 														<div class="input-group-btn">'
-															. '<video src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls>'  .
+															. '<video src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls loop autoplay width="350"></video>'  .
 															'</div>';
-													} else {
+													} 
+													if($typeFinal[0] == "image") {
 														echo '<div class="input-group">
 														<div class="input-group-btn">'
-															. '<img src="' . $uploadDir . $media[$j]["nomMedia"] . '" height="350" width="350">'  .
+															. '<img src="' . $uploadDir . $media[$j]["nomMedia"] . '" width="350">'  .
+															'</div>';
+													}
+													if ($typeFinal[0] == "audio") {
+														echo '<div class="input-group">
+														<div class="input-group-btn">'
+															. '<audio src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls width="350"></video>'  .
 															'</div>';
 													}
 												}
+
+												
 											}
+											
 											echo '</div>
 
 										</div>';

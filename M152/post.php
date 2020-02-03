@@ -14,33 +14,39 @@ include 'scripts.php';
 $btnSubmit = filter_input(INPUT_POST, "valider", FILTER_SANITIZE_STRING);
 $uploadDir = "rsc/";
 if ($btnSubmit) {
+    //Obtient le nombre total d'images
     $total = count($_FILES['img']['name']);
-
+    //Récupére le commentaire inséré et la date
     $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
     $date = date('Y-m-d H:i:s');
-    addPost($commentaire, $date);
+    //Vérifie que le commentaire n'est pas vide 
+        if ($commentaire != "") {
 
-    if ($total  > 0) { //Vérifie qu'il y ait des fichiers à importer
-        var_dump($total);
-        for ($i = 0; $i < $total; $i++) {
+            $idPost = addPost($commentaire, $date);
 
-            $imgName =  $_FILES['img']['name'][$i];
-            $_FILES['img']['name'][$i] = time() . "_" . $imgName;
-            $imgName =  $_FILES['img']['name'][$i];
-            $imgTmpName = $_FILES['img']['tmp_name'][$i];
-            $imgType = $_FILES['img']['type'][$i];
+            //Vérifie qu'il y ait des fichiers à importer
+            if ($total  > 0) {
 
-            move_uploaded_file($imgTmpName, $uploadDir . $imgName);
+                for ($i = 0; $i < $total; $i++) {
+                    //Vérifie que le fichier ne soit pas plus grand que 3Mo
+                    if ($_FILES['img']['size'][$i] <= 9145728) {
+                        $imgName =  $_FILES['img']['name'][$i];
+                        $_FILES['img']['name'][$i] = time() . "_" . $imgName;
+                        $imgName = $_FILES['img']['name'][$i];
+                        $imgTmpName = $_FILES['img']['tmp_name'][$i];
+                        $imgType = $_FILES['img']['type'][$i];
 
-            echo "name".$imgName;
+                        //Vérifie si l'importation a bien été réalisée
+                        if (move_uploaded_file($imgTmpName, $uploadDir . $imgName)) {
 
-            $idPost = getIdPostWithCommentAndDate($commentaire, $date);
-
-            addMedia($imgName, $imgType, $idPost["idPost"]);
+                            addMedia($imgName, $imgType, $idPost);
+                        }
+                    }
+                }
+                header("Location: index.php");
+                exit();
+            }
         }
-        header("Location: index.php");
-        exit();
-    }
 }
 
 
@@ -167,10 +173,10 @@ if ($btnSubmit) {
                                                 <input type="text" class="form-control" name="commentaire" placeholder="Add a comment here !" />
                                                 <div class="clearfix"></div>
                                                 <hr>
-                                                Choose images : <input type="file" name="img[]" multiple accept="image/*,video/*" />
+                                                Choose images : <input type="file" name="img[]" multiple accept="image/*,video/mp4, audio/mp3" />
 
                                                 <hr>
-                                                <input type="submit" value="Post" name="valider" />
+                                                <input type="submit" value="Post" name="valider"  class='btn btn-primary btn-sm'/>
                                     </form>
 
                                 </div>

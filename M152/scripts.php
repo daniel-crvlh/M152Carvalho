@@ -43,7 +43,7 @@ function addPost($commentaire)
     $db = connectDB();
 
     $sql = "INSERT INTO Post(commentaire) VALUES(:commentaire);";
-     var_dump($db);
+
     $request = $db->prepare($sql);
 
     if ($request->execute(array(
@@ -53,21 +53,6 @@ function addPost($commentaire)
     } else {
         return NULL;
     }
-}
-
-
-
-function getIdPostWithCommentAndDate($commentaire, $datePost)
-{
-    $db = connectDB();
-
-    $sql = "SELECT idPost FROM Post WHERE commentaire = :commentaire AND datePost = :datePost;";
-    $request = $db->prepare($sql);
-    $request->execute(array(
-        "commentaire" => $commentaire,
-        "datePost" => $datePost
-    ));
-    return $request->fetch(PDO::FETCH_ASSOC);
 }
 
 function getAllPosts(){
@@ -87,5 +72,23 @@ function getAllMedias(){
     $request = $db->prepare($sql);
     $request->execute();
     return $request->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function deletePost($idPost){
+    $db = connectDB();
+
+    $sql = "DELETE FROM Post WHERE idPost = :idPost;";
+
+    $request = $db->prepare($sql);
+    return ($request->execute(array('idPost' => $idPost)));
+}
+
+function deleteMedia($idMedia){
+    $db = connectDB();
+
+    $sql = "DELETE FROM Media WHERE idMedia = :idMedia;";
+
+    $request = $db->prepare($sql);
+    return ($request->execute(array('idMedia' => $idMedia)));
 }
 
