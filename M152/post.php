@@ -15,38 +15,39 @@ $btnSubmit = filter_input(INPUT_POST, "valider", FILTER_SANITIZE_STRING);
 $uploadDir = "rsc/";
 if ($btnSubmit) {
     //Obtient le nombre total d'images
-    $total = count($_FILES['img']['name']);
+    $total = count(array_filter($_FILES['img']['name']));
+
     //Récupére le commentaire inséré et la date
     $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
     $date = date('Y-m-d H:i:s');
-    //Vérifie que le commentaire n'est pas vide 
-        if ($commentaire != "") {
 
-            $idPost = addPost($commentaire, $date);
+    $error = "Oui";
 
-            //Vérifie qu'il y ait des fichiers à importer
-            if ($total  > 0) {
+    $db = connectDB();
 
-                for ($i = 0; $i < $total; $i++) {
-                    //Vérifie que le fichier ne soit pas plus grand que 3Mo
-                    if ($_FILES['img']['size'][$i] <= 9145728) {
-                        $imgName =  $_FILES['img']['name'][$i];
-                        $_FILES['img']['name'][$i] = time() . "_" . $imgName;
-                        $imgName = $_FILES['img']['name'][$i];
-                        $imgTmpName = $_FILES['img']['tmp_name'][$i];
-                        $imgType = $_FILES['img']['type'][$i];
 
-                        //Vérifie si l'importation a bien été réalisée
-                        if (move_uploaded_file($imgTmpName, $uploadDir . $imgName)) {
+    //Vérifie qu'il y ait des fichiers à importer ou au moins un commentaire
+    if ($total  > 0 || $commentaire != "") {
+        $idPost = addPost($commentaire);
+        for ($i = 0; $i < $total; $i++) {
+            //Vérifie que le fichier ne soit pas plus grand que 3Mo
+            if ($_FILES['img']['size'][$i] <= 9145728) {
+                $imgName =  $_FILES['img']['name'][$i];
+                $_FILES['img']['name'][$i] = time() . "_" . $imgName;
+                $imgName = $_FILES['img']['name'][$i];
+                $imgTmpName = $_FILES['img']['tmp_name'][$i];
+                $imgType = $_FILES['img']['type'][$i];
 
-                            addMedia($imgName, $imgType, $idPost);
-                        }
-                    }
-                }
-                header("Location: index.php");
-                exit();
-            }
+                //Vérifie si l'importation a bien été réalisée
+                if (move_uploaded_file($imgTmpName, $uploadDir . $imgName)) {
+
+                    addMedia($imgName, $imgType, $idPost);
+                } 
+            } 
         }
+        header("Location: index.php");
+        exit();
+    } 
 }
 
 
@@ -63,9 +64,6 @@ if ($btnSubmit) {
     <title>Chapitre 2</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="assets/css/bootstrap.css" rel="stylesheet">
-    <!--[if lt IE 9]>
-          <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
     <link href="assets/css/facebook.css" rel="stylesheet">
 </head>
 
@@ -108,18 +106,6 @@ if ($btnSubmit) {
                                 <li>
                                     <!-- Insèrer un lien pour la page POST  -->
                                     <a href="" role="button" data-toggle="modal"><i class="glyphicon glyphicon-plus"></i>Post</a>
-                                </li>
-                            </ul>
-                            <ul class="nav navbar-nav navbar-right">
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">More</a></li>
-                                        <li><a href="">More</a></li>
-                                        <li><a href="">More</a></li>
-                                        <li><a href="">More</a></li>
-                                        <li><a href="">More</a></li>
-                                    </ul>
                                 </li>
                             </ul>
                         </nav>
@@ -166,17 +152,18 @@ if ($btnSubmit) {
                                     <form action="post.php" method="POST" enctype="multipart/form-data">
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
-                                                <h4>Post</h4>
+                                                <h4>Post <?php echo $error; ?></h4>
                                             </div>
                                             <div class="panel-body">
                                                 <a href="#">Comment : </a>
                                                 <input type="text" class="form-control" name="commentaire" placeholder="Add a comment here !" />
                                                 <div class="clearfix"></div>
                                                 <hr>
-                                                Choose images : <input type="file" name="img[]" multiple accept="image/*,video/mp4, audio/mp3" />
+                                                Choose images : <input type="file" name="img[]" multiple accept="image/*,video/*, audio/*"/>
 
                                                 <hr>
-                                                <input type="submit" value="Post" name="valider"  class='btn btn-primary btn-sm'/>
+                                                <input type="submit" value="Post" name="valider" class='btn btn-primary btn-sm' />
+
                                     </form>
 
                                 </div>

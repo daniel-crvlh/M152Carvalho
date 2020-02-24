@@ -1,18 +1,18 @@
 <?php
+
 include "scripts.php";
 //Récupère l'id du post en get
-$idPost = filter_input(INPUT_GET, "id", FILTER_SANITIZE_STRING);
-
+$idMedia = filter_input(INPUT_GET, "id", FILTER_SANITIZE_STRING);
+$idPost = filter_input(INPUT_GET, "idPost", FILTER_SANITIZE_STRING);
 $medias = getAllMedias();
 
 foreach ($medias as $media) {
-    if ($media["idPost"] == $idPost) {
+    if ($media["idMedia"] == $idMedia) {
         deleteMedia($media["idMedia"]);
         unlink("rsc/" . $media["nomMedia"]);        
     }
 }
 
-deletePost($idPost);
 
-header('Location: index.php');
+header('Location: updatePost.php?id='.$idPost);
 exit();

@@ -74,18 +74,6 @@
 									<a href="post.php"><i class="glyphicon glyphicon-plus"></i> Post</a>
 								</li>
 							</ul>
-							<ul class="nav navbar-nav navbar-right">
-								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i></a>
-									<ul class="dropdown-menu">
-										<li><a href="">More</a></li>
-										<li><a href="">More</a></li>
-										<li><a href="">More</a></li>
-										<li><a href="">More</a></li>
-										<li><a href="">More</a></li>
-									</ul>
-								</li>
-							</ul>
 						</nav>
 					</div>
 					<!-- /top nav -->
@@ -129,63 +117,69 @@
 
 									<div class="panel panel-default">
 										<h2>Publications</h2>
-										<?php
-										include "scripts.php";
-										$uploadDir = "rsc/";
-										$posts = getAllPosts();
-										$media = getAllMedias();
-										$total = count($posts);
-										$totalMedias = count($media);
-										for ($i = 0; $i < $total; $i++) {
+										<table>
 
 
-											echo '<div class="panel-body">
+											<?php
+											include "scripts.php";
+											$uploadDir = "rsc/";
+											$posts = getAllPosts();
+											$media = getAllMedias();
+											$total = count($posts);
+											$totalMedias = count($media);
+
+
+											for ($i = 0; $i < $total; $i++) {
+
+
+												echo '<tr><td><div class="panel-body">
 											<div class="clearfix"></div>';
-											echo '<div class="panel-body">
+												echo '<div class="panel-body">
 											<div class="clearfix"></div>
 											<hr>
 
 											<p><b>';
-											echo $posts[$i]["commentaire"] ;
-											echo "<a href='deletePost.php?id=" . $posts[$i]["idPost"] . "'> <button class='btn btn-primary btn-sm'>Delete</button></a>";
-											echo '</b></p>';
-											for ($j = 0; $j < $totalMedias; $j++) {
-												if ($posts[$i]["idPost"] == $media[$j]["idPost"]) {
+												echo $posts[$i]["commentaire"];
+												echo "</td><td><a href='deletePost.php?id=" . $posts[$i]["idPost"] . "'> <button class='btn btn-primary btn-sm'>Delete</button></a> 
+												<a href='updatePost.php?id=" . $posts[$i]["idPost"] . "'> <button class='btn btn-primary btn-sm'>Update</button></a>";
+												echo '</b></p></td></tr>';
+												for ($j = 0; $j < $totalMedias; $j++) {
+													if ($posts[$i]["idPost"] == $media[$j]["idPost"]) {
 
-													$typeFinal = explode("/", $media[$j]["typeMedia"]);
+														$typeFinal = explode("/", $media[$j]["typeMedia"]);
 
+														echo "<tr><td>";
 
+														if ($typeFinal[0] == "video") {
+															echo '<div class="input-group">
+																<div class="input-group-btn">'
+																. '<video src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls loop autoplay width="350"></video>'  .
+																'</div></td>';
+														}
+														if ($typeFinal[0] == "image") {
+															echo '<div class="input-group">
+																<div class="input-group-btn">'
+																. '<img src="' . $uploadDir . $media[$j]["nomMedia"] . '" width="350">'  .
+																'</div></td>';
+														}
+														if ($typeFinal[0] == "audio") {
+															echo '<div class="input-group">
+																<div class="input-group-btn">'
+																. '<audio src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls width="350"></audio>'  .
+																'</div></td>';
+														}
 
-													if ($typeFinal[0] == "video") {
-														echo '<div class="input-group">
-														<div class="input-group-btn">'
-															. '<video src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls loop autoplay width="350"></video>'  .
-															'</div>';
-													} 
-													if($typeFinal[0] == "image") {
-														echo '<div class="input-group">
-														<div class="input-group-btn">'
-															. '<img src="' . $uploadDir . $media[$j]["nomMedia"] . '" width="350">'  .
-															'</div>';
-													}
-													if ($typeFinal[0] == "audio") {
-														echo '<div class="input-group">
-														<div class="input-group-btn">'
-															. '<audio src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls width="350"></video>'  .
-															'</div>';
+														echo "</tr>";
 													}
 												}
 
-												
-											}
-											
-											echo '</div>
+												echo '</div>
 
 										</div>';
-										}
+											}
 
-										?>
-
+											?>
+										</table>
 									</div>
 
 
