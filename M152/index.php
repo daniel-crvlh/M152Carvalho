@@ -1,7 +1,7 @@
 <!--
 	Carvalho Daniel
 	20.01.2020
-	Exercice Chapitre 2
+	M152
 
 	Template trouvé sur :
 	https://usebootstrap.com/download-theme/facebook
@@ -15,7 +15,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<meta charset="utf-8">
-	<title>Chapitre 2</title>
+	<title>M152</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<link href="assets/css/bootstrap.css" rel="stylesheet">
 	<!--[if lt IE 9]>

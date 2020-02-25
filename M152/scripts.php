@@ -104,6 +104,11 @@ function deleteMedia($idMedia)
     return ($request->execute(array('idMedia' => $idMedia)));
 }
 
+
+/*
+Met à jour le commentaire d'un post précis
+retourne True si c'est bon, sinon ça retourne false
+*/
 function updateComment($idPost, $commentaire){
     $db = connectDB();
 
@@ -115,7 +120,9 @@ function updateComment($idPost, $commentaire){
         'idPost' => $idPost,
         'commentaire' => $commentaire
     ))) {
-        return TRUE;
-    } 
+        return true;
+    } else {
+        return false;
+    }
 
 }

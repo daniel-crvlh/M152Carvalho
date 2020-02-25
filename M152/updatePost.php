@@ -1,10 +1,29 @@
+<?php
+
+include "scripts.php";
+$idPost = filter_input(INPUT_GET, "id", FILTER_SANITIZE_STRING);
+$btnSubmit = filter_input(INPUT_POST, "validation", FILTER_SANITIZE_STRING);
+$commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
+
+if ($btnSubmit) {
+    header("Location: updateComment.php?id=" . $idPost . "&comment=" . $commentaire);
+    exit();
+}
+
+$uploadDir = "rsc/";
+$posts = getAllPosts();
+$media = getAllMedias();
+$total = count($posts);
+$totalMedias = count($media);
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <title>Chapitre 2</title>
+    <title>M152</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <!--[if lt IE 9]>
@@ -107,84 +126,75 @@
                                     <div class="panel panel-default">
                                         <h2>Publications</h2>
 
-
-                                        <table>
-
-
-                                            <?php
-                                            include "scripts.php";
-                                            $idPost = filter_input(INPUT_GET, "id", FILTER_SANITIZE_STRING);
-                                            $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
-
-                                            $uploadDir = "rsc/";
-                                            $posts = getAllPosts();
-                                            $media = getAllMedias();
-                                            $total = count($posts);
-                                            $totalMedias = count($media);
+                                        <form method="POST" action="updatePost.php?id=<?php echo $idPost; ?>">
 
 
+                                            <table>
 
-                                            for ($i = 0; $i < $total; $i++) {
 
-                                                if ($posts[$i]["idPost"] == $idPost) {
-                                                    echo '<tr><td><div class="panel-body">
+                                                <?php
+
+                                                for ($i = 0; $i < $total; $i++) {
+
+                                                    if ($posts[$i]["idPost"] == $idPost) {
+                                                        echo '<tr><td><div class="panel-body">
 											    <div class="clearfix"></div>';
-                                                    echo '<div class="panel-body">
+                                                        echo '<div class="panel-body">
 											    <div class="clearfix"></div>
 											    <hr>
-
 											    <p><b>';
-                                                    echo  "<input type='text' name='commentaire' value='" . $posts[$i]["commentaire"] . "' >";
-                                                    echo ' <a href="updateComment.php?id=' . $idPost . '&comment=' .$commentaire . '"> <button class="btn btn-primary btn-sm"> Update Comment </button></a>';
-                                                    for ($j = 0; $j < $totalMedias; $j++) {
-                                                        if ($posts[$i]["idPost"] == $media[$j]["idPost"]) {
+                                                        echo "<input type='text' name='commentaire' value='" . $posts[$i]["commentaire"] . "'>";
 
-                                                            $typeFinal = explode("/", $media[$j]["typeMedia"]);
+                                                        echo '<input type="submit" class="btn btn-primary btn-sm" name="validation" value="Update Comment" />';
+                                                        for ($j = 0; $j < $totalMedias; $j++) {
+                                                            if ($posts[$i]["idPost"] == $media[$j]["idPost"]) {
 
-                                                            echo "<tr><td>";
+                                                                $typeFinal = explode("/", $media[$j]["typeMedia"]);
 
-                                                            if ($typeFinal[0] == "video") {
-                                                                echo '<div class="input-group">
+                                                                echo "<tr><td>";
+
+                                                                if ($typeFinal[0] == "video") {
+                                                                    echo '<div class="input-group">
 																<div class="input-group-btn">'
-                                                                    . '<video src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls loop autoplay width="350"></video>'  .
-                                                                    '</div>
-                                                                    <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . '"> <button class="btn btn-primary btn-sm"> Delete </button></a>
+                                                                        . '<video src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls loop autoplay width="350"></video>'  .
+                                                                        '</div>
+                                                                    <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . '" class="btn btn-primary btn-sm"> Delete </a>
                                                                 
                                                                 
                                                                 </td>';
-                                                            }
-                                                            if ($typeFinal[0] == "image") {
-                                                                echo '<div class="input-group">
+                                                                }
+                                                                if ($typeFinal[0] == "image") {
+                                                                    echo '<div class="input-group">
 																<div class="input-group-btn">'
-                                                                    . '<img src="' . $uploadDir . $media[$j]["nomMedia"] . '" width="350">'  .
-                                                                    '</div>
-                                                                    <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . '"> <button class="btn btn-primary btn-sm"> Delete </button></a>
+                                                                        . '<img src="' . $uploadDir . $media[$j]["nomMedia"] . '" width="350">'  .
+                                                                        '</div>
+                                                                    <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . '" class="btn btn-primary btn-sm"> Delete </a>
                                                                 
                                                                 </td>';
-                                                            }
-                                                            if ($typeFinal[0] == "audio") {
-                                                                echo '<div class="input-group">
+                                                                }
+                                                                if ($typeFinal[0] == "audio") {
+                                                                    echo '<div class="input-group">
 																<div class="input-group-btn">'
-                                                                    . '<audio src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls width="350"></video>'  .
-                                                                    '</div>
-                                                                <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . '"> <button class="btn btn-primary btn-sm"> Delete </button></a>
+                                                                        . '<audio src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls width="350"></video>'  .
+                                                                        '</div>
+                                                                <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . ' " class="btn btn-primary btn-sm"> Delete </a>
                                                                 
                                                                 </td>';
-                                                            }
+                                                                }
 
-                                                            echo "</tr>";
+                                                                echo "</tr>";
+                                                            }
                                                         }
-                                                    }
 
-                                                    echo '</div>
+                                                        echo '</div>
 
 										                </div>';
+                                                    }
                                                 }
-                                            }
 
-                                            ?>
-                                        </table>
-
+                                                ?>
+                                            </table>
+                                        </form>
                                     </div>
 
 

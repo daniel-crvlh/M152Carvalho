@@ -1,7 +1,7 @@
 <!--
 	Carvalho Daniel
 	20.01.2020
-	Exercice Chapitre 1
+	M152
 
 	Template trouvé sur :
 	https://usebootstrap.com/download-theme/facebook
@@ -21,7 +21,9 @@ if ($btnSubmit) {
     $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
     $date = date('Y-m-d H:i:s');
 
-    $error = "Oui";
+    if (!isset($error)) {
+        $error = "";
+    }
 
     $db = connectDB();
 
@@ -30,11 +32,14 @@ if ($btnSubmit) {
     if ($total  > 0 || $commentaire != "") {
         $idPost = addPost($commentaire);
         for ($i = 0; $i < $total; $i++) {
+
+            $imgName = $_FILES['img']['name'][$i];
+            $error .=  $imgName . " a été plus grand que la taille attendue. (3Mo) \r\n";
             //Vérifie que le fichier ne soit pas plus grand que 3Mo
             if ($_FILES['img']['size'][$i] <= 9145728) {
                 $imgName =  $_FILES['img']['name'][$i];
                 $_FILES['img']['name'][$i] = time() . "_" . $imgName;
-                $imgName = $_FILES['img']['name'][$i];
+
                 $imgTmpName = $_FILES['img']['tmp_name'][$i];
                 $imgType = $_FILES['img']['type'][$i];
 
@@ -42,17 +47,15 @@ if ($btnSubmit) {
                 if (move_uploaded_file($imgTmpName, $uploadDir . $imgName)) {
 
                     addMedia($imgName, $imgType, $idPost);
-                } 
-            } 
+                }
+            } else {
+                $error .=  $imgName . " a été plus grand que la taille attendue. (3Mo) \r\n";
+            }
         }
         header("Location: index.php");
         exit();
-    } 
+    }
 }
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +64,7 @@ if ($btnSubmit) {
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <title>Chapitre 2</title>
+    <title>M152</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/facebook.css" rel="stylesheet">
@@ -105,7 +108,7 @@ if ($btnSubmit) {
                                 </li>
                                 <li>
                                     <!-- Insèrer un lien pour la page POST  -->
-                                    <a href="" role="button" data-toggle="modal"><i class="glyphicon glyphicon-plus"></i>Post</a>
+                                    <a href="post.php"><i class="glyphicon glyphicon-plus"></i> Post</a>
                                 </li>
                             </ul>
                         </nav>
@@ -152,14 +155,14 @@ if ($btnSubmit) {
                                     <form action="post.php" method="POST" enctype="multipart/form-data">
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
-                                                <h4>Post <?php echo $error; ?></h4>
+                                                <h4>Post <?= $error ?></h4>
                                             </div>
                                             <div class="panel-body">
                                                 <a href="#">Comment : </a>
-                                                <input type="text" class="form-control" name="commentaire" placeholder="Add a comment here !" />
+                                                <input type="text" class="form-control" value="<?= $commentaire ?>" name="commentaire" placeholder="Add a comment here !" />
                                                 <div class="clearfix"></div>
                                                 <hr>
-                                                Choose images : <input type="file" name="img[]" multiple accept="image/*,video/*, audio/*"/>
+                                                Choose images : <input type="file" name="img[]" multiple accept="image/*,video/*, audio/*" />
 
                                                 <hr>
                                                 <input type="submit" value="Post" name="valider" class='btn btn-primary btn-sm' />
