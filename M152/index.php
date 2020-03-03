@@ -18,9 +18,6 @@
 	<title>M152</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<link href="assets/css/bootstrap.css" rel="stylesheet">
-	<!--[if lt IE 9]>
-          <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
 	<link href="assets/css/facebook.css" rel="stylesheet">
 </head>
 
@@ -128,27 +125,31 @@
 											$total = count($posts);
 											$totalMedias = count($media);
 
-
+											//Parcoure tous les posts
 											for ($i = 0; $i < $total; $i++) {
 
 
 												echo '<tr><td><div class="panel-body">
-											<div class="clearfix"></div>';
+													<div class="clearfix"></div>';
 												echo '<div class="panel-body">
-											<div class="clearfix"></div>
-											<hr>
-
-											<p><b>';
+													<div class="clearfix"></div>
+													<hr><p><b>';
 												echo $posts[$i]["commentaire"];
-												echo "</td><td><a href='deletePost.php?id=" . $posts[$i]["idPost"] . "'> <button class='btn btn-primary btn-sm'>Delete</button></a> 
-												<a href='updatePost.php?id=" . $posts[$i]["idPost"] . "'> <button class='btn btn-primary btn-sm'>Update</button></a>";
+												echo "</td><td><a href='deletePost.php?id=" . $posts[$i]["idPost"] . "' class='btn btn-primary btn-sm'>Delete</a> 
+													 <a href='updatePost.php?id=" . $posts[$i]["idPost"] . "' class='btn btn-primary btn-sm'>Update</a>";
 												echo '</b></p></td></tr>';
+
+												//Parcoure tous les médias
 												for ($j = 0; $j < $totalMedias; $j++) {
 													if ($posts[$i]["idPost"] == $media[$j]["idPost"]) {
 
+														//Coupe le type du média
 														$typeFinal = explode("/", $media[$j]["typeMedia"]);
 
 														echo "<tr><td>";
+
+
+														//Vérifie quel est le type à afficher
 
 														if ($typeFinal[0] == "video") {
 															echo '<div class="input-group">
@@ -173,9 +174,7 @@
 													}
 												}
 
-												echo '</div>
-
-										</div>';
+												echo '</div></div>';
 											}
 
 											?>

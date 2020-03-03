@@ -1,20 +1,31 @@
 <?php
 
 include "scripts.php";
+
+//Récupére l'id du post en Get
 $idPost = filter_input(INPUT_GET, "id", FILTER_SANITIZE_STRING);
 $btnSubmit = filter_input(INPUT_POST, "validation", FILTER_SANITIZE_STRING);
 $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
 
+
+//Si on a appuyé sur le bouton, on met à jour le commentaire avec l'idPost et le commentaire
 if ($btnSubmit) {
-    header("Location: updateComment.php?id=" . $idPost . "&comment=" . $commentaire);
-    exit();
+    updateComment($idPost, $commentaire);
+    $nbMedias = nbMediasPourUnPost($idPost);
+    if ($nbMedias <= 0 && $commentaire == "") {
+        header("Location: deletePost.php?id=".$idPost);
+        exit();
+    }
 }
+
 
 $uploadDir = "rsc/";
 $posts = getAllPosts();
 $media = getAllMedias();
 $total = count($posts);
 $totalMedias = count($media);
+
+
 ?>
 
 <!DOCTYPE html>
@@ -55,15 +66,7 @@ $totalMedias = count($media);
                             </button>
                             <a href="http://usebootstrap.com/theme/facebook" class="navbar-brand logo">D</a>
                         </div>
-                        <!-- 
 
-
-
-
-
-
-
-						-->
                         <nav class="collapse navbar-collapse" role="navigation">
                             <form class="navbar-form navbar-left" action="">
                                 <div class="input-group input-group-sm" style="max-width:360px;">
@@ -124,62 +127,54 @@ $totalMedias = count($media);
 
 
                                     <div class="panel panel-default">
-                                        <h2>Publications</h2>
-
                                         <form method="POST" action="updatePost.php?id=<?php echo $idPost; ?>">
 
-
                                             <table>
-
-
                                                 <?php
-
+                                                //Parcoure tous les posts
                                                 for ($i = 0; $i < $total; $i++) {
 
                                                     if ($posts[$i]["idPost"] == $idPost) {
                                                         echo '<tr><td><div class="panel-body">
-											    <div class="clearfix"></div>';
+											                    <div class="clearfix"></div>';
                                                         echo '<div class="panel-body">
-											    <div class="clearfix"></div>
-											    <hr>
-											    <p><b>';
+											                <div class="clearfix"></div>
+                                                            <p><b>';
+                                                        //Crée deux inputs de type text et submit    
                                                         echo "<input type='text' name='commentaire' value='" . $posts[$i]["commentaire"] . "'>";
-
                                                         echo '<input type="submit" class="btn btn-primary btn-sm" name="validation" value="Update Comment" />';
+
+                                                        //Parcoure tous les médias et vérifie lesquels doivent être affichés
                                                         for ($j = 0; $j < $totalMedias; $j++) {
                                                             if ($posts[$i]["idPost"] == $media[$j]["idPost"]) {
 
+                                                                //Coupe le type du média
                                                                 $typeFinal = explode("/", $media[$j]["typeMedia"]);
 
                                                                 echo "<tr><td>";
 
+                                                                //Vérifie quel est le type à afficher
+
                                                                 if ($typeFinal[0] == "video") {
                                                                     echo '<div class="input-group">
-																<div class="input-group-btn">'
+																        <div class="input-group-btn">'
                                                                         . '<video src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls loop autoplay width="350"></video>'  .
                                                                         '</div>
-                                                                    <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . '" class="btn btn-primary btn-sm"> Delete </a>
-                                                                
-                                                                
-                                                                </td>';
+                                                                        <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . '" class="btn btn-primary btn-sm"> Delete </a></td>';
                                                                 }
                                                                 if ($typeFinal[0] == "image") {
                                                                     echo '<div class="input-group">
-																<div class="input-group-btn">'
+																        <div class="input-group-btn">'
                                                                         . '<img src="' . $uploadDir . $media[$j]["nomMedia"] . '" width="350">'  .
                                                                         '</div>
-                                                                    <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . '" class="btn btn-primary btn-sm"> Delete </a>
-                                                                
-                                                                </td>';
+                                                                        <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . '" class="btn btn-primary btn-sm"> Delete </a></td>';
                                                                 }
                                                                 if ($typeFinal[0] == "audio") {
                                                                     echo '<div class="input-group">
-																<div class="input-group-btn">'
+																        <div class="input-group-btn">'
                                                                         . '<audio src="' . $uploadDir . $media[$j]["nomMedia"] . '" controls width="350"></video>'  .
                                                                         '</div>
-                                                                <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . ' " class="btn btn-primary btn-sm"> Delete </a>
-                                                                
-                                                                </td>';
+                                                                        <a href="deleteMedia.php?id=' . $media[$j]["idMedia"] . '&idPost=' . $posts[$i]["idPost"] . ' " class="btn btn-primary btn-sm"> Delete </a></td>';
                                                                 }
 
                                                                 echo "</tr>";

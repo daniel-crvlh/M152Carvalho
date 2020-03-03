@@ -18,7 +18,7 @@ function connectDB()
     return $bdd;
 }
 
-
+//Ajoute un média dans un post
 function addMedia($nomMedia, $typeMedia, $idPost)
 {
 
@@ -46,6 +46,7 @@ function addMedia($nomMedia, $typeMedia, $idPost)
     
 }
 
+//Ajoute un post avec un commentaire
 function addPost($commentaire)
 {
     try {
@@ -64,6 +65,7 @@ function addPost($commentaire)
     }
 }
 
+//Obtient tous les posts
 function getAllPosts()
 {
 
@@ -73,7 +75,7 @@ function getAllPosts()
     $request->execute();
     return $request->fetchAll(PDO::FETCH_ASSOC);
 }
-
+//Obtient tous les medias
 function getAllMedias()
 {
     $db = connectDB();
@@ -83,7 +85,7 @@ function getAllMedias()
     $request->execute();
     return $request->fetchAll(PDO::FETCH_ASSOC);
 }
-
+//Supprime un post
 function deletePost($idPost)
 {
     $db = connectDB();
@@ -93,7 +95,7 @@ function deletePost($idPost)
     $request = $db->prepare($sql);
     return ($request->execute(array('idPost' => $idPost)));
 }
-
+//Supprime un media
 function deleteMedia($idMedia)
 {
     $db = connectDB();
@@ -124,5 +126,28 @@ function updateComment($idPost, $commentaire){
     } else {
         return false;
     }
+
+}
+
+function nbMediasPourUnPost($idPost){
+    $db = connectDB();
+
+    $sql = "SELECT COUNT(*) FROM Media WHERE idPost = :idPost;";
+
+    $request = $db->prepare($sql);
+
+    if ($request->execute(array(
+        'idPost' => $idPost
+    ))) {
+        return $request->fetchColumn();
+    }
+}
+
+function getCommentaireOfPost($idPost){
+    $db = connectDB();
+    $sql = "SELECT commentaire FROM Post WHERE idPost = :idPost;";
+    $request = $db->prepare($sql);
+    $request->execute(array("idPost" => $idPost));
+    return $request->fetchAll(PDO::FETCH_ASSOC);
 
 }

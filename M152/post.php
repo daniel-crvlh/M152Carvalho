@@ -21,9 +21,6 @@ if ($btnSubmit) {
     $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
     $date = date('Y-m-d H:i:s');
 
-    if (!isset($error)) {
-        $error = "";
-    }
 
     $db = connectDB();
 
@@ -34,7 +31,6 @@ if ($btnSubmit) {
         for ($i = 0; $i < $total; $i++) {
 
             $imgName = $_FILES['img']['name'][$i];
-            $error .=  $imgName . " a été plus grand que la taille attendue. (3Mo) \r\n";
             //Vérifie que le fichier ne soit pas plus grand que 3Mo
             if ($_FILES['img']['size'][$i] <= 9145728) {
                 $imgName =  $_FILES['img']['name'][$i];
@@ -48,9 +44,7 @@ if ($btnSubmit) {
 
                     addMedia($imgName, $imgType, $idPost);
                 }
-            } else {
-                $error .=  $imgName . " a été plus grand que la taille attendue. (3Mo) \r\n";
-            }
+            } 
         }
         header("Location: index.php");
         exit();
@@ -155,7 +149,7 @@ if ($btnSubmit) {
                                     <form action="post.php" method="POST" enctype="multipart/form-data">
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
-                                                <h4>Post <?= $error ?></h4>
+                                                <h4>Post </h4>
                                             </div>
                                             <div class="panel-body">
                                                 <a href="#">Comment : </a>
