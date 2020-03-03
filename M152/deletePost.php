@@ -7,7 +7,6 @@ $medias = getAllMedias();
 //Parcoure tous les medias et vérifie lesquels sont ceux qui appartiennent à un post
 foreach ($medias as $media) {
     if ($media["idPost"] == $idPost) {
-        deleteMedia($media["idMedia"]);
         //Supprime le fichier d'un dossier choisi
         unlink("rsc/" . $media["nomMedia"]);        
     }

@@ -33,15 +33,18 @@ if ($btnSubmit) {
             $imgName = $_FILES['img']['name'][$i];
             //Vérifie que le fichier ne soit pas plus grand que 3Mo
             if ($_FILES['img']['size'][$i] <= 9145728) {
-                $imgName =  $_FILES['img']['name'][$i];
-                $_FILES['img']['name'][$i] = time() . "_" . $imgName;
+                
+                $uniqId = uniqid('', true) . '_';
 
+                $imgName =  $_FILES['img']['name'][$i];
+                $_FILES['img']['name'][$i] = $uniqId . $imgName;
+                $imgName =  $_FILES['img']['name'][$i];
                 $imgTmpName = $_FILES['img']['tmp_name'][$i];
                 $imgType = $_FILES['img']['type'][$i];
 
                 //Vérifie si l'importation a bien été réalisée
                 if (move_uploaded_file($imgTmpName, $uploadDir . $imgName)) {
-
+                    //imagescale($uploadDir.$imgName, 350);
                     addMedia($imgName, $imgType, $idPost);
                 }
             } 
