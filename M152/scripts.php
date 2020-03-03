@@ -129,6 +129,9 @@ function updateComment($idPost, $commentaire){
 
 }
 
+/*
+retourne le nombre de médias pour un post précis
+*/
 function nbMediasPourUnPost($idPost){
     $db = connectDB();
 
@@ -142,7 +145,9 @@ function nbMediasPourUnPost($idPost){
         return $request->fetchColumn();
     }
 }
-
+/*
+retourne un un commentaire d'un post précis
+*/
 function getCommentaireOfPost($idPost){
     $db = connectDB();
     $sql = "SELECT commentaire FROM Post WHERE idPost = :idPost;";
